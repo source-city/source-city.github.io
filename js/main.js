@@ -4,10 +4,13 @@ requirejs.config({
   shim: {
     'vendor/three': {
       exports: 'THREE'
-    }//,
-//    'vendor/underscore': {
-//      exports: '_'
-//    }
+    },
+    'vendor/underscore': {
+      exports: '_'
+    },
+    'vendor/jquery': {
+      exports: '$'
+    }
   }
 });
 

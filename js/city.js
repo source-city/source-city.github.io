@@ -12,12 +12,12 @@ define(['vendor/three'], function (THREE) {
       var geometry, material, mesh;
       
       geometry = new THREE.BoxGeometry(building.foundations, building.height, building.foundations);
-      material = new THREE.MeshBasicMaterial({
-        color: 0xff0000,
-        wireframe: true
+      material = new THREE.MeshLambertMaterial({
+        color: 0xff0000
       });
 
       mesh = new THREE.Mesh(geometry, material);
+      mesh.receiveShadow = true;
       scene.add(mesh);
     };
 
