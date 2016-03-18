@@ -1,46 +1,29 @@
-require({
-    baseUrl: 'js',
-    // three.js should have UMD support soon, but it currently does not
-    shim: { 'vendor/three': { exports: 'THREE' } }
-}, [
-    'vendor/three'
-], function(THREE) {
+requirejs.config({
+  baseUrl: 'js',
+  urlArgs: 'ts=' + (new Date()).getTime(),
+  shim: {
+    'vendor/three': {
+      exports: 'THREE'
+    }//,
+//    'vendor/underscore': {
+//      exports: '_'
+//    }
+  }
+});
 
-var scene, camera, renderer;
-var geometry, material, mesh;
+require(['city-architect'], function (cityArchitect) {
 
-init();
-animate();
+  var data = [
+    {
+      label: 'com.bla.BlaBla',
+      metrics: {
+        loc: 100,
+        dependencies: 7
+      }
+    }
+  ];
 
-function init() {
-
-    scene = new THREE.Scene();
-
-    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-    camera.position.z = 1000;
-
-    geometry = new THREE.BoxGeometry( 200, 200, 200 );
-    material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-
-    mesh = new THREE.Mesh( geometry, material );
-    scene.add( mesh );
-
-    renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
-
-    document.body.appendChild( renderer.domElement );
-
-}
-
-function animate() {
-
-    requestAnimationFrame( animate );
-
-    mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.02;
-
-    renderer.render( scene, camera );
-
-}
+  var city = cityArchitect.buildCity(data);
+  document.body.appendChild(city);
 
 });
