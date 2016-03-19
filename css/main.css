@@ -29,7 +29,9 @@ body {
 .navbar {
   background: rgba(184, 58, 107, 1);
 }
-
+body {
+  background-color: #f0f0ff;
+}
 .navbar .navbar-brand, .navbar .navbar-brand:hover {
   color: #fff;
 }
