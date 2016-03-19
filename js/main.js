@@ -5,6 +5,10 @@ requirejs.config({
     'vendor/three': {
       exports: 'THREE'
     },
+    'vendor/FlyControls': {
+      deps: ['vendor/three'],
+      exports: 'THREE.FlyControls'
+    },
     'vendor/underscore': {
       exports: '_'
     },
@@ -14,8 +18,8 @@ requirejs.config({
   }
 });
 
-require(['city-architect'], function (cityArchitect) {
-
+require(['city-architect', 'vendor/jquery', 'vendor/underscore'], function (cityArchitect, $, _) {
+  
 //  var data = [
 //    {
 //      label: 'com.bla.BlaBla',
@@ -26,50 +30,16 @@ require(['city-architect'], function (cityArchitect) {
 //    }
 //  ];
 
-  var data = [
-    { foundations: 100, height: 200},
-    { foundations: 150, height: 300},
-    { foundations: 250, height: 150},
-    { foundations: 150, height: 150},
-    { foundations: 100, height: 200},
-    { foundations: 100, height: 300},
-    { foundations: 150, height: 300},
-    { foundations: 150, height: 300},
-    { foundations: 170, height: 200},
-    { foundations: 50, height: 100},
-    { foundations: 50, height: 100},
-    { foundations: 50, height: 100},
-    { foundations: 50, height: 100},
-    { foundations: 50, height: 100},
-    { foundations: 50, height: 100},
-    { foundations: 50, height: 100},
-    { foundations: 50, height: 100},
-    { foundations: 80, height: 100},
-    { foundations: 80, height: 100},
-    { foundations: 80, height: 100},
-    { foundations: 80, height: 100},
-    { foundations: 80, height: 100},
-    { foundations: 80, height: 100},
-    { foundations: 100, height: 200},
-    { foundations: 200, height: 250},
-    { foundations: 100, height: 120},
-    { foundations: 100, height: 100},
-    { foundations: 80, height: 250},
-    { foundations: 90, height: 250},
-    { foundations: 200, height: 250},
-    { foundations: 90, height: 250},
-    { foundations: 90, height: 250},
-    { foundations: 90, height: 250},
-    { foundations: 90, height: 250},
-    { foundations: 90, height: 250},
-    { foundations: 90, height: 250},
-    { foundations: 90, height: 250},
-    { foundations: 90, height: 250},
-    { foundations: 90, height: 250},
-    { foundations: 90, height: 250}
-  ];
-  
-  var city = cityArchitect.buildCity(data);
-  document.body.appendChild(city);
+  $.get('http://source-city.herokuapp.com/api/metrics/aHR0cHM6Ly9naXRodWIuY29tL3NwcmluZy1wcm9qZWN0cy9zcHJpbmctYm9vdC5naXQ=')
+    .done(function(data){
+      var cityData = _(data.fileMetrics).map(function (metric) {
+        return {
+          foundations : metric.dependencies * 5,
+          height : metric.loc,
+          label: metric.label
+        };
+      });
+      cityArchitect.buildCity(cityData);
+    });
 
 });
