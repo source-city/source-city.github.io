@@ -53,8 +53,6 @@ define(['vendor/jquery', 'vendor/underscore', 'vendor/virtual-dom'], function ($
           if (city) {
             _.extend(city, progress);
           } else {
-            console.log('wrong', city);
-            console.log(progress.id);
             cityList.unshift(progress);
           }
           update(cityList);

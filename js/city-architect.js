@@ -73,14 +73,11 @@ define(['vendor/three', 'vendor/underscore', 'city', 'vendor/TrackballControls']
             var newLegend = '';
 
             if (prevSelected) {
-              console.log('prev', prevSelected.material.color);
               prevSelected.material.color.setHex(0xcccccc);
-              console.log('prev', prevSelected.material.color);
             }
             if (intersects.length > 0) {
                 var selected = intersects[0].object;
                 selected.material.color.setHex(0xb83a6b);
-                console.log('next', selected.material.color);
                 newLegend = selected.building.label;
                 prevSelected = selected;
             }
