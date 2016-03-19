@@ -26,20 +26,21 @@ define(['vendor/three', 'vendor/underscore'], function (THREE, _) {
       mesh.building = building;
       buildings.push(mesh);
       scene.add(mesh);
-      
+
     }
-    
+
     function addFloor() {
-      
+
         var maxValue = _(buildings).max(max);
-      
+
         function max(b){
           return Math.max(Math.abs(b.building.x), Math.abs(b.building.y)) + b.building.foundations/2;
         }
-      
+
         var geometry, material;
-      
-        geometry = new THREE.BoxGeometry(max(maxValue)*2.4, 10, max(maxValue)*2.4);
+
+        var floorSize = max(maxValue)*2.1;
+        geometry = new THREE.BoxGeometry(floorSize, 10, floorSize);
         material = new THREE.MeshLambertMaterial({
           color: 0xcccccc
         });
@@ -48,6 +49,9 @@ define(['vendor/three', 'vendor/underscore'], function (THREE, _) {
         floor.receiveShadow = true;
         floor.translateY(-10);
         scene.add(floor);
+        return {
+            size: floorSize
+        };
     }
 
     return {

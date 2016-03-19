@@ -14,14 +14,14 @@ define(['vendor/three', 'vendor/underscore', 'city', 'vendor/TrackballControls']
         _(layout(data)).each(function (b) {
             city.addBuilding(b);
         });
-        city.addFloor();
+        var floor = city.addFloor();
         $('#viewer-progress-bar').addClass('hide');
         $('#city-viewer').removeClass('hide');
 
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
         camera.position.z = 0;
-        camera.position.x = 3000;
-        camera.position.y = 3000;
+        camera.position.x = floor.size * 0.8;
+        camera.position.y = floor.size / 3;
         camera.lookAt(new THREE.Vector3(0, 0, 0));
 
         var container = document.createElement('div');
@@ -41,7 +41,7 @@ define(['vendor/three', 'vendor/underscore', 'city', 'vendor/TrackballControls']
 
         var controls = createControls();
         var prevSelected;
-      
+
         animate();
 
         container.appendChild(renderer.domElement);
@@ -71,7 +71,7 @@ define(['vendor/three', 'vendor/underscore', 'city', 'vendor/TrackballControls']
 
             var intersects = raycaster.intersectObjects(city.buildings);
             var newLegend = '';
-            
+
             if (prevSelected) {
               console.log('prev', prevSelected.material.color);
               prevSelected.material.color.setHex(0xcccccc);

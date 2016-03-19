@@ -16,6 +16,7 @@ define(['vendor/jquery', 'vendor/underscore', 'city-architect'], function ($, _,
                         };
                     });
                     var viewer = cityArchitect.buildCity(cityData);
+                    $('#city-viewer').empty().append($('<h1 class="cityName">').text(data.name).append($('<br><small>').text(data.url)));
                     $('#city-viewer').append(viewer);
                 });
         }

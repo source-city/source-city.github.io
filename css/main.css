@@ -41,6 +41,15 @@ body {
 .progress-bar {
   background-color: rgba(184, 58, 107, 1);
 }
+.cityName {
+  position: absolute;
+  left: 20px;
+  top: 60px;
+  color: rgba(184, 58, 107, 1);
+}
+.cityName small {
+  font-size: 50%;
+}
 
 .btn-link {
     color: rgba(184, 58, 107, 1);
