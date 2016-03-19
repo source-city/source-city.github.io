@@ -36,7 +36,7 @@ define(['vendor/three'], function (THREE) {
       mesh.building = building;
       buildings.push(mesh);
       scene.add(mesh);
-    };
+    }
 
     return {
       scene : scene,

@@ -11,16 +11,66 @@
         <!-- This assumes your project will be responsive -->
         <meta name="viewport" content="width=device-width">
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
         <link rel="stylesheet" href="css/main.css">
     </head>
     <body>
-      <div id="info">
-		    <b>WASD</b> move, <b>R|F</b> up | down, <b>Q|E</b> roll, <b>up|down</b> pitch, <b>left|right</b> yaw<br/>
-        <span id="legend"></span>
-		  </div>
-        <!--[if lt IE 10]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-        <script data-main="js/main" src="js/vendor/require.js"></script>
+
+      <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">
+              Source<strong>City</strong>
+            </a>
+          </div>
+        </div>
+      </nav>
+      
+      <div id="city-viewer" class="hide">
+      </div>
+      <div id="city-list" class="container hide" style="margin-top: 80px;">
+        
+        <h3 class="page-header">Generated Cities</h3>
+        
+        <div id="repositories"></div>
+        
+        <div class="actions">
+          <a class="btn btn-primary btn-lg showNewCity" data-toggle="modal" data-target="#newCityModal">
+            <i class="glyphicon glyphicon-plus"></i>
+            Build your own city
+          </a>
+        </div>
+        
+      </div>
+      
+      <div id="newCityModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close closeCityModal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Build new city</h4>
+            </div>
+            <div class="modal-body">
+              <form class="form horizontal-form">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">City name:</label>
+                  <input type="text" class="form-control name" id="exampleInputEmail1" placeholder="">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Github URL:</label>
+                  <input type="text" class="form-control url" id="exampleInputPassword1" placeholder="">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default closeCityModal">Cancel</button>
+              <button type="button" class="btn btn-primary buildCity">Build</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+    
+      <script data-main="js/main" src="js/vendor/require.js"></script>
     </body>
 </html>
