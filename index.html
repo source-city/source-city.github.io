@@ -27,23 +27,31 @@
         </div>
       </nav>
       
-      <div id="city-viewer" class="hide">
+      <div id="legend" style="position:absolute;right: 10px; top: 60px; ">
       </div>
+      <div id="viewer-progress-bar" class="hide">
+          <div class="progress">
+              <div class="progress-bar progress-bar-striped active fully-loaded">
+
+              </div>
+          </div>
+      </div>
+      <div id="city-viewer"></div>
       <div id="city-list" class="container hide" style="margin-top: 80px;">
-        
+
         <h3 class="page-header">Generated Cities</h3>
-        
+
         <div id="repositories"></div>
-        
+
         <div class="actions">
           <a class="btn btn-primary btn-lg showNewCity" data-toggle="modal" data-target="#newCityModal">
             <i class="glyphicon glyphicon-plus"></i>
             Build your own city
           </a>
         </div>
-        
+
       </div>
-      
+
       <div id="newCityModal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -70,7 +78,7 @@
           </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
       </div><!-- /.modal -->
-    
+
       <script data-main="js/main" src="js/vendor/require.js"></script>
     </body>
 </html>

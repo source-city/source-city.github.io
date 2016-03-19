@@ -4,8 +4,8 @@ define(['vendor/jquery', 'vendor/underscore', 'vendor/virtual-dom'], function ($
 
     loadCities: function () {
 
-      $("#city-viewer").empty().addClass('hide');
-      $("#city-list").removeClass('hide');
+      $('#city-viewer').empty().addClass('hide');
+      $('#city-list').removeClass('hide');
       
       var createElement = virtualDom.create;
       var h = virtualDom.h;

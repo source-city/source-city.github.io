@@ -14,30 +14,34 @@ define(['vendor/three', 'vendor/underscore', 'city', 'vendor/TrackballControls']
         _(layout(data)).each(function (b) {
             city.addBuilding(b);
         });
+        city.addFloor();
+        $('#viewer-progress-bar').addClass('hide');
+        $('#city-viewer').removeClass('hide');
 
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.z = 1000;
-        camera.position.x = 500;
-        camera.position.y = 1000;
+        camera.position.z = 0;
+        camera.position.x = 3000;
+        camera.position.y = 3000;
         camera.lookAt(new THREE.Vector3(0, 0, 0));
 
         var container = document.createElement('div');
-        
+
         renderer = new THREE.WebGLRenderer({
             antialias : true
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0xf5f5f5);
+        renderer.setClearColor(0xf0f0ff);
         var light = new THREE.AmbientLight(0x404040); // soft white light
         light.castShadow = true;
         city.scene.add(light);
-        var sun = new THREE.DirectionalLight(0xffffff, 1.2);
+        var sun = new THREE.DirectionalLight(0xffffff, 1.0);
         sun.castShadow = true;
         sun.position.set(1, 2, 3);
         city.scene.add(sun);
 
         var controls = createControls();
-
+        var prevSelected;
+      
         animate();
 
         container.appendChild(renderer.domElement);
@@ -45,7 +49,7 @@ define(['vendor/three', 'vendor/underscore', 'city', 'vendor/TrackballControls']
         renderer.domElement.addEventListener('mousemove', onDocumentMouseMove, false);
 
         return container;
-      
+
         function animate() {
 
             requestAnimationFrame(animate);
@@ -67,8 +71,18 @@ define(['vendor/three', 'vendor/underscore', 'city', 'vendor/TrackballControls']
 
             var intersects = raycaster.intersectObjects(city.buildings);
             var newLegend = '';
+            
+            if (prevSelected) {
+              console.log('prev', prevSelected.material.color);
+              prevSelected.material.color.setHex(0xcccccc);
+              console.log('prev', prevSelected.material.color);
+            }
             if (intersects.length > 0) {
-                newLegend = intersects[0].object.building.label;
+                var selected = intersects[0].object;
+                selected.material.color.setHex(0xff0000);
+                console.log('next', selected.material.color);
+                newLegend = selected.building.label;
+                prevSelected = selected;
             }
             document.getElementById('legend').innerHTML = newLegend;
         }

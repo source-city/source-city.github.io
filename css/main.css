@@ -41,3 +41,12 @@ body {
 .status {
   padding: 10px;
 }
+
+#viewer-progress-bar {
+    width: 300px;
+    margin: 377px auto;
+}
+
+.fully-loaded {
+    width: 100%;
+}
