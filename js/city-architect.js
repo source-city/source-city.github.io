@@ -4,15 +4,15 @@ define(['vendor/three', 'vendor/underscore', 'city', 'vendor/TrackballControls']
         buildCity : buildCity
     };
 
-    function buildCity(data) {
+    function buildCity(buildings) {
 
         var camera, renderer;
         var raycaster = new THREE.Raycaster();
         var mouse = new THREE.Vector2();
         var city = new City();
 
-        _(layout(data)).each(function (b) {
-            city.addBuilding(b);
+        _(layout(buildings)).each(function (building) {
+            city.addBuilding(building);
         });
         var floor = city.addFloor();
         $('#viewer-progress-bar').addClass('hide');
@@ -100,152 +100,127 @@ define(['vendor/three', 'vendor/underscore', 'city', 'vendor/TrackballControls']
 
     }
 
-    function layout(data) {
-
-        var layoutElements = [];
-        var point = {
-            x : 0,
-            y : 0
-        };
-        var directions = [left, up, right, down];
-        var direction = left;
-        var i;
-
-        data = _(data).sortBy(function (b) {
-            return -b.foundations * b.height;
+    function layout(buildings) {
+        if (buildings.length < 1) {
+            return;
+        }
+        var layoutBuildings = [];
+        buildings = _(buildings).sortBy(function (building) {
+            return -building.foundations * building.height * building.height;
         });
-        for (i = 0; i < data.length; i++) {
 
-            var b = data[i];
-            _.extend(b, point);
-            layoutElements.push(b);
+        var directions = [moveLeft, moveUp, moveRight, moveDown];
 
-            if (i < data.length - 1) {
-                point = findNextValidPoint(i, i + 1);
-                if (!point) {
-                    break;
-                }
+        var moveInCurrentDirection = moveLeft;
+        var currentRectangle = square(newPoint(0, 0), buildings[0].foundations);
+
+        for (var buildingIndex = 0; buildingIndex < buildings.length; buildingIndex++) {
+            var currentBuilding = buildings[buildingIndex];
+            _.extend(currentBuilding, currentRectangle);
+            layoutBuildings.push(currentBuilding);
+            if (buildingIndex < buildings.length - 1) {
+                currentRectangle = findValidRectangleFor(buildingIndex, buildingIndex + 1);
             }
-
-
         }
 
-        function findNextValidPoint(branch, i) {
+        return layoutBuildings;
 
-            if (branch === 0 && i !== 1) {
-                return false;
-            }
-
-            var n = data[i];
-            var lastPlacedBuilding = data[branch];
-            var lastPoint = {
-                x : lastPlacedBuilding.x,
-                y : lastPlacedBuilding.y
+        function newPoint(x, y) {
+            return {
+                x: x,
+                y: y
             };
-            var delta = (lastPlacedBuilding.foundations / 2 + n.foundations / 2) * 1.6;
+        }
 
-            var nextDirection = turnForward(direction);
-            var prevDirection = turnBackward(direction);
-            var sameDirection = direction;
+        function square(center, length) {
+            var halfLength = length / 2;
+            return {
+                x: center.x,
+                y: center.y,
+                leftTop: newPoint(center.x - halfLength, center.y - halfLength),
+                rightBottom: newPoint(center.x + halfLength, center.y + halfLength)
+            };
+        }
 
-            if (isValidLocationFor(n, nextDirection(lastPoint, delta))) {
-                direction = nextDirection;
-                return direction(lastPoint, delta);
-            } else if (isValidLocationFor(n, sameDirection(lastPoint, delta))) {
-                direction = sameDirection;
-                return direction(lastPoint, delta);
-            } else if (isValidLocationFor(n, prevDirection(lastPoint, delta))) {
-                direction = prevDirection;
-                return direction(lastPoint, delta);
+        function findValidRectangleFor(branch, index) {
+
+            var currentlyPlacedBuilding = buildings[index];
+            var lastPlacedBuilding = buildings[branch];
+            var pointOfLastPlacedBuilding = newPoint(lastPlacedBuilding.x, lastPlacedBuilding.y);
+            var distance = (lastPlacedBuilding.foundations / 2 + currentlyPlacedBuilding.foundations / 2) * 1.6;
+
+            var moveInNextDirection = turnClockwise(moveInCurrentDirection);
+            var moveInPreviousDirection = turnCounterclockwise(moveInCurrentDirection);
+            var moveInSameDirection = moveInCurrentDirection;
+            var rectangleCandidate;
+            if (isValid(rectangleCandidate = moveInNextDirection(currentlyPlacedBuilding, pointOfLastPlacedBuilding, distance))) {
+                moveInCurrentDirection = moveInNextDirection;
+                return rectangleCandidate;
+            } else if (isValid(rectangleCandidate = moveInSameDirection(currentlyPlacedBuilding, pointOfLastPlacedBuilding, distance))) {
+                moveInCurrentDirection = moveInSameDirection;
+                return rectangleCandidate;
+            } else if (isValid(rectangleCandidate = moveInPreviousDirection(currentlyPlacedBuilding, pointOfLastPlacedBuilding, distance))) {
+                moveInCurrentDirection = moveInPreviousDirection;
+                return rectangleCandidate;
             } else {
-                direction = prevDirection;
-                return findNextValidPoint(branch - 1, i);
+                moveInCurrentDirection = moveInPreviousDirection;
+                return findValidRectangleFor(branch - 1, index);
             }
         }
 
-        return layoutElements;
-
-        function turnForward(direction) {
+        function turnClockwise(direction) {
             return directions[(directions.indexOf(direction) + 1) % 4];
         }
 
-        function turnBackward(direction) {
+        function turnCounterclockwise(direction) {
             return directions[(directions.indexOf(direction) + 3) % 4];
         }
 
-        function left(p, delta) {
-            return {
-                x : p.x - delta,
-                y : p.y
-            };
+        function moveLeft(building, point, distance) {
+            return square(movePointLeft(point, distance), building.foundations);
         }
 
-        function right(p, delta) {
-            return {
-                x : p.x + delta,
-                y : p.y
-            };
+        function moveRight(building, point, distance) {
+            return square(movePointRight(point, distance), building.foundations);
         }
 
-        function up(p, delta) {
-            return {
-                x : p.x,
-                y : p.y + delta
-            };
+        function moveUp(building, point, distance) {
+            return square(movePointUp(point, distance), building.foundations);
         }
 
-        function down(p, delta) {
-            return {
-                x : p.x,
-                y : p.y - delta
-            };
+        function moveDown(building, point, distance) {
+            return square(movePointDown(point, distance), building.foundations);
         }
 
-        function isValidLocationFor(building, point) {
+        function movePointLeft(point, distance) {
+            return newPoint(point.x - distance, point.y);
+        }
 
-            return !_(layoutElements).find(colliding);
+        function movePointRight(point, distance) {
+            return newPoint(point.x + distance, point.y);
+        }
 
-            function colliding(b) {
-                var a = {
-                    x : point.x,
-                    y : point.y,
-                    foundations : building.foundations
-                };
-                return _(cornersOf(b)).find(inside(a)) || _(cornersOf(a)).find(inside(b));
+        function movePointUp(point, distance) {
+            return newPoint(point.x, point.y + distance);
+        }
+
+        function movePointDown(point, distance) {
+            return newPoint(point.x, point.y - distance);
+        }
+
+        function isValid(rectangle) {
+
+            return !_(layoutBuildings).find(intersecting);
+
+            function intersecting(layoutBuilding) {
+                return intersects(rectangle, layoutBuilding);
             }
 
-            function cornersOf(b) {
-
-                return [
-                    {
-                        x : b.x - b.foundations / 2,
-                        y : b.y - b.foundations / 2
-                    },
-                    {
-                        x : b.x - b.foundations / 2,
-                        y : b.y + b.foundations / 2
-                    },
-                    {
-                        x : b.x + b.foundations / 2,
-                        y : b.y - b.foundations / 2
-                    },
-                    {
-                        x : b.x + b.foundations / 2,
-                        y : b.y + b.foundations / 2
-                    }
-                ];
-            }
-
-            function inside(a) {
-
-                return function (point) {
-                    return (point.x < a.x + a.foundations / 2 && point.x > a.x - a.foundations / 2) &&
-                        (point.y < a.y + a.foundations / 2 && point.y > a.y - a.foundations / 2);
-                };
-
+            function intersects(left, right) {
+                return (left.rightBottom.x > right.leftTop.x) && (right.rightBottom.x > left.leftTop.x) &&
+                (left.rightBottom.y > right.leftTop.y) && (right.rightBottom.y > left.leftTop.y);
             }
         }
-
     }
 
 });
